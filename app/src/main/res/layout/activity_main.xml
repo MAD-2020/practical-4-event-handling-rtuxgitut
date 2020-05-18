@@ -4,4 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"/>
+    tools:context=".MainActivity">
+
+    <!--layout_constraint is to centralise number text to center-->
+
+    <TextView
+        android:id = "@+id/resultViewer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text= "0"/>
+
+    <!--Given each button unique id to differentiate and create each button-->
+
+    <Button
+        android:id = "@+id/hole1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart = "75dp"
+        android:layout_marginTop = "250dp"
+        android:text = "0"
+        app:layout_constraintStart_toStartOf = "parent"
+        app:layout_constraintTop_toTopOf = "parent"
+
+        />
+
+    <Button
+        android:id = "@+id/hole2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart = "160dp"
+        android:layout_marginTop = "250dp"
+        android:text = "0"
+        app:layout_constraintStart_toStartOf = "parent"
+        app:layout_constraintTop_toTopOf = "parent"
+        />
+
+    <Button
+        android:id = "@+id/hole3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart = "245dp"
+        android:layout_marginTop = "250dp"
+        android:text = "0"
+        app:layout_constraintStart_toStartOf = "parent"
+        app:layout_constraintTop_toTopOf = "parent"
+        />
+
+</android.support.constraint.ConstraintLayout>

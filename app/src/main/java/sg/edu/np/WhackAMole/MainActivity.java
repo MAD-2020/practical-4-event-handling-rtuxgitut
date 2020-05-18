@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,19 +25,87 @@ public class MainActivity extends AppCompatActivity {
         - Feel free to modify the function to suit your program.
     */
 
+    private static final String TAG = "Whack-A-Mole"; //Title of game
+
+    private TextView resultViewer; //Allow program to see result of the whack a mole
+    private Integer randomLocation;
+    private Integer score;
+    private Button firstbutton; //Individually declare all 3 buttons
+    private Button secondbutton;
+    private Button thirdbutton;
+    private List<Button> holeList = new ArrayList<>(); //List to store all 3 buttons
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        resultViewer = findViewById(R.id.resultViewer);
+        firstbutton = findViewById(R.id.hole1);
+        holeList.add(firstbutton);
+        secondbutton = findViewById(R.id.hole2);
+        holeList.add(secondbutton);
+        thirdbutton = findViewById(R.id.hole3);
+        holeList.add(thirdbutton);
         Log.v(TAG, "Finished Pre-Initialisation!");
-
-
     }
+
     @Override
     protected void onStart(){
         super.onStart();
         setNewMole();
+
+        View.OnClickListener clicker = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Button pressedButton = (Button) v;
+                Log.v(TAG,"Reached");
+                switch (holeList.indexOf(pressedButton)) {
+                    case 0:
+                        Log.v(TAG,"Left Button Clicked!");
+                        break;
+                    case 1:
+                        Log.v(TAG,"Middle Button Clicked!");
+                        break;
+                    case 2:
+                        Log.v(TAG,"Right Button Clicked!");
+                        break;
+                    default:
+                        Log.v(TAG,"No input found.");
+                }
+
+                score = Integer.parseInt(resultViewer.getText().toString());
+                switch (pressedButton.getText().toString()) {
+                    case "*": //
+                        Log.v(TAG,"Successful, points added!");
+                        score++;
+                        resultViewer.setText(score.toString());
+                        doCheck(pressedButton);
+                        break;
+                    case "O":
+                        if (score <= 0)
+                        {
+                            Log.v(TAG,"Reminder: To score points hit the button with the '*' in it");
+                            score = 0; //Remove the occurrence of a negative number if player fails to hit target while score is at 0
+                        }
+                        else
+                        {
+                            Log.v(TAG,"Unsuccessful, points deducted!");
+                            score--; //Works as normal if user gained points beforehand
+                        }
+                        resultViewer.setText(score.toString());
+                        break;
+                    default: //'Starting game' instructions. Will be overridden after user hits target for the 1st time when he/she launches the program
+                        Log.v(TAG,"To score points hit the button with the '*' in it!");
+                }
+                holeList.get(randomLocation).setText("O"); //Set all other holes as distractions
+                setNewMole();
+            }
+        };
+        firstbutton.setOnClickListener(clicker);
+        secondbutton.setOnClickListener(clicker);
+        thirdbutton.setOnClickListener(clicker);
+
         Log.v(TAG, "Starting GUI!");
     }
     @Override
@@ -51,27 +121,52 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void doCheck(Button checkButton) {
-        /* Checks for hit or miss and if user qualify for advanced page.
-            Triggers nextLevelQuery().
-         */
-    }
-
-    private void nextLevelQuery(){
-        /*
-        Builds dialog box here.
-        Log.v(TAG, "User accepts!");
-        Log.v(TAG, "User decline!");
-        Log.v(TAG, "Advance option given to user!");
-        belongs here*/
-    }
-
-    private void nextLevel(){
-        /* Launch advanced page */
+    private void doCheck(Button buttonchecker) {
+        if (score > 0 && score % 10 == 0) {
+            nextLevelQuery();
+        }
     }
 
     private void setNewMole() {
         Random ran = new Random();
-        int randomLocation = ran.nextInt(3);
+        randomLocation = ran.nextInt(3);
+        holeList.get(randomLocation).setText("*"); //Set mole in a random hole
+    }
+
+    private void nextLevelQuery(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Warning! Harder Whack-A-Mole Incoming!");
+        builder.setMessage("Would you like to play in hard mode?");
+        builder.setCancelable(false); //Must click either yes or no
+
+        //If user choose yes
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int id) {
+                Log.v(TAG, "User accepts!");
+                advancedLevel();
+            }
+        });
+
+        //If user choose no
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.v(TAG, "User decline!");
+            }
+        });
+
+        AlertDialog alert = builder.create();
+        Log.v(TAG, "Advance option given to user!");
+        alert.show();
+    }
+
+    private void advancedLevel(){
+        /* Launch advanced page */
+        Intent secondActivity;
+        secondActivity = new Intent(this, Main2Activity.class);
+        secondActivity.putExtra("Score: ", Integer.parseInt(resultViewer.getText().toString()));
+        startActivity(secondActivity);
     }
 }
